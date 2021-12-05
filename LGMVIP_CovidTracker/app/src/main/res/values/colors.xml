@@ -7,4 +7,11 @@
     <color name="teal_700">#FF018786</color>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+
+    <color name="ConfirmedCases">#827717</color>
+    <color name="ActiveCases">#3F51B5</color>
+    <color name="RecoveredCases">#2E7D32</color>
+    <color name="DeadCases">#DD2C00</color>
+
+
 </resources>

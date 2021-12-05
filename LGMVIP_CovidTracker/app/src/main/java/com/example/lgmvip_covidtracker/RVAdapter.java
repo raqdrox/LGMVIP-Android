@@ -16,13 +16,12 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.RVViewHolder>{
 
     public RVAdapter(List<Model> mList ) {
         modelList=mList;
-        System.out.println(mList);
     }
 
     @NonNull
     @Override
     public RVViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.testing,parent,false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.rvview,parent,false);
         RVViewHolder holder = new RVViewHolder(view);
         return holder;
     }
@@ -30,6 +29,7 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.RVViewHolder>{
     @Override
     public void onBindViewHolder(@NonNull RVViewHolder holder, int position) {
         Model data = modelList.get(position);
+        System.out.println(holder.DistrictNameView);
         holder.DistrictNameView.setText(data.getDistrict());
         holder.ActiveCasesView.setText(Integer.toString(data.getActive()));
         holder.RecoveredCasesView.setText(Integer.toString(data.getRecovered()));
