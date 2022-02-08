@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.util.Pair;
 import android.widget.Button;
 import android.widget.Toast;
+
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.ar.core.AugmentedFace;
@@ -22,22 +23,20 @@ import java.util.Iterator;
 import java.util.Map;
 
 public class MainActivity extends AppCompatActivity {
-    private ModelRenderable modelRenderable;
-    private Texture texture;
-    private boolean isAdded = false;
     private final HashMap<AugmentedFace, AugmentedFaceNode> faceNodeMap = new HashMap<>();
-    private AugmentedFaceNode augmentedFaceNode;
-    private final ArrayList<Pair<Integer,Integer>> Filters = new ArrayList<>(Arrays.asList(
+    private final ArrayList<Pair<Integer, Integer>> Filters = new ArrayList<>(Arrays.asList(
             new Pair<>(R.raw.glasses1, R.drawable.moustache),
             new Pair<>(R.raw.glasses2, R.drawable.pwise),
             new Pair<>(R.raw.glasses3, R.drawable.redlips)));
-    private int FilterIdx=0;
-    private boolean  changeModel = false;
+    private ModelRenderable modelRenderable;
+    private Texture texture;
+    private AugmentedFaceNode augmentedFaceNode;
+    private int FilterIdx = 0;
+    private boolean changeModel = false;
 
-    private void SetFilter(int ModelResource, int TextureResource)
-    {
+    private void SetFilter(int ModelResource, int TextureResource) {
         ModelRenderable.builder()
-                .setSource(this,ModelResource)
+                .setSource(this, ModelResource)
                 .build()
                 .thenAccept(modelRenderable -> {
                     this.modelRenderable = modelRenderable;
@@ -53,14 +52,17 @@ public class MainActivity extends AppCompatActivity {
                 .setSource(this, TextureResource)
                 .build()
                 .thenAccept(textureModel -> texture = textureModel)
-                .exceptionally(throwable -> {Toast.makeText(this, "Error loading texture", Toast.LENGTH_SHORT).show();return null; }
+                .exceptionally(throwable -> {
+                            Toast.makeText(this, "Error loading texture", Toast.LENGTH_SHORT).show();
+                            return null;
+                        }
                 );
     }
-    private void ApplyFilter(int ModelResource, int TextureResource)
-    {
+
+    private void ApplyFilter(int ModelResource, int TextureResource) {
 
         CustomArFragment customArFragment = (CustomArFragment) getSupportFragmentManager().findFragmentById(R.id.arFragment);
-        SetFilter(ModelResource,TextureResource);
+        SetFilter(ModelResource, TextureResource);
         assert customArFragment != null;
         customArFragment.getArSceneView().setCameraStreamRenderPriority(Renderable.RENDER_PRIORITY_FIRST);
         customArFragment.getArSceneView().getScene().addOnUpdateListener(frameTime -> {
@@ -82,23 +84,20 @@ public class MainActivity extends AppCompatActivity {
                     faceNodeMap.put(augmentedFace, augmentedFaceNode);
 
 
-
-                Iterator<Map.Entry<AugmentedFace, AugmentedFaceNode>> iterator = faceNodeMap.entrySet().iterator();
-                Map.Entry<AugmentedFace, AugmentedFaceNode> entry = iterator.next();
-                AugmentedFace face = entry.getKey();
-                while (face.getTrackingState() == TrackingState.STOPPED) {
-                    AugmentedFaceNode node = entry.getValue();
-                    node.setParent(null);
-                    iterator.remove();
-                }
-                }
-                else if(changeModel)
-                {
+                    Iterator<Map.Entry<AugmentedFace, AugmentedFaceNode>> iterator = faceNodeMap.entrySet().iterator();
+                    Map.Entry<AugmentedFace, AugmentedFaceNode> entry = iterator.next();
+                    AugmentedFace face = entry.getKey();
+                    while (face.getTrackingState() == TrackingState.STOPPED) {
+                        AugmentedFaceNode node = entry.getValue();
+                        node.setParent(null);
+                        iterator.remove();
+                    }
+                } else if (changeModel) {
                     faceNodeMap.get(augmentedFace).setFaceMeshTexture(texture);
                     faceNodeMap.get(augmentedFace).setFaceRegionsRenderable(modelRenderable);
                 }
             }
-            changeModel=true;
+            changeModel = true;
         });
     }
 
@@ -106,28 +105,26 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Bundle extras = getIntent().getExtras();
-        if(extras != null)
-            FilterIdx=(int)extras.getInt("CurrID");
+        if (extras != null)
+            FilterIdx = extras.getInt("CurrID");
         setContentView(R.layout.activity_main);
 
         Button buttonSwitch = findViewById(R.id.changebtn);
         buttonSwitch.setOnClickListener(v -> OnSwitch());
-        Pair<Integer, Integer> filter=GetNextFilterIds();
+        Pair<Integer, Integer> filter = GetNextFilterIds();
         //Pair<Integer, Integer> filter=Filters.get(new Random().nextInt(Filters.size()));
-        ApplyFilter(filter.first,filter.second);
+        ApplyFilter(filter.first, filter.second);
     }
 
-    private void OnSwitch()
-    {
+    private void OnSwitch() {
         //Pair<Integer, Integer> filter=Filters.get(new Random().nextInt(Filters.size()));
-        Pair<Integer, Integer> filter=GetNextFilterIds();
-        ApplyFilter(filter.first,filter.second);
+        Pair<Integer, Integer> filter = GetNextFilterIds();
+        ApplyFilter(filter.first, filter.second);
     }
 
 
-    private Pair<Integer, Integer>  GetNextFilterIds()
-    {
-        FilterIdx= (FilterIdx+1)% Filters.size();
+    private Pair<Integer, Integer> GetNextFilterIds() {
+        FilterIdx = (FilterIdx + 1) % Filters.size();
         assert FilterIdx >= 0;
         return Filters.get(FilterIdx);
     }

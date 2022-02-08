@@ -8,12 +8,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentActivity;
-import androidx.fragment.app.FragmentManager;
-import androidx.lifecycle.Lifecycle;
 import androidx.recyclerview.widget.RecyclerView;
-import androidx.viewpager2.adapter.FragmentStateAdapter;
 
 import org.eazegraph.lib.charts.PieChart;
 import org.eazegraph.lib.models.PieModel;
@@ -33,51 +28,51 @@ public class VPAdapter extends RecyclerView.Adapter<VPAdapter.VPFragment> {
     @NonNull
     @Override
     public VPFragment onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.vpview,parent,false);
-        VPAdapter.VPFragment holder = new VPAdapter.VPFragment(view);
-        return holder;
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.vpview, parent, false);
+        return new VPFragment(view);
     }
 
     @Override
     public void onBindViewHolder(@NonNull VPFragment holder, int position) {
         Model data = modelList.get(position);
         holder.LocNameView.setText(data.getDistrict());
-        holder.ActiveCasesView.setText(Integer.toString(data.getActive()));
-        holder.RecoveredCasesView.setText(Integer.toString(data.getRecovered()));
-        holder.DeathCasesView.setText(Integer.toString(data.getDeceased()));
-        holder.TotalCasesView.setText(Integer.toString(data.getConfirmed()));
-        float activper=(float)data.getActive()/data.getConfirmed();
-        float recper=(float)data.getRecovered()/data.getConfirmed();
-        float decper=(float)data.getDeceased()/data.getConfirmed();
-        System.out.println(activper+" /// "+recper+" /// "+decper);
-        holder.pieChart.addPieSlice(new PieModel("Active",activper, Color.parseColor("#3F51B5")));
-        holder.pieChart.addPieSlice(new PieModel("Recovered",recper, Color.parseColor("#2E7D32")));
-        holder.pieChart.addPieSlice(new PieModel("Dead",decper, Color.parseColor("#DD2C00")));
+        holder.ActiveCasesView.setText(String.valueOf(data.getActive()));
+        holder.RecoveredCasesView.setText(String.valueOf(data.getRecovered()));
+        holder.DeathCasesView.setText(String.valueOf(data.getDeceased()));
+        holder.TotalCasesView.setText(String.valueOf(data.getConfirmed()));
+        float activper = (float) data.getActive() / data.getConfirmed();
+        float recper = (float) data.getRecovered() / data.getConfirmed();
+        float decper = (float) data.getDeceased() / data.getConfirmed();
+        System.out.println(activper + " /// " + recper + " /// " + decper);
+        holder.pieChart.addPieSlice(new PieModel("Active", activper, Color.parseColor("#3F51B5")));
+        holder.pieChart.addPieSlice(new PieModel("Recovered", recper, Color.parseColor("#2E7D32")));
+        holder.pieChart.addPieSlice(new PieModel("Dead", decper, Color.parseColor("#DD2C00")));
         holder.pieChart.startAnimation();
     }
 
     @Override
     public int getItemCount() {
-        if(modelList==null)
-            modelList=new ArrayList<>();
+        if (modelList == null)
+            modelList = new ArrayList<>();
         return modelList.size();
     }
 
-    class VPFragment extends RecyclerView.ViewHolder{
+    class VPFragment extends RecyclerView.ViewHolder {
         PieChart pieChart;
         TextView LocNameView;
         TextView ActiveCasesView;
         TextView RecoveredCasesView;
         TextView DeathCasesView;
         TextView TotalCasesView;
+
         public VPFragment(@NonNull View itemView) {
             super(itemView);
-            pieChart=itemView.findViewById(R.id.piechart);
-            LocNameView=itemView.findViewById(R.id.LocationName);
-            ActiveCasesView=itemView.findViewById(R.id.ActiveCasesFrag);
+            pieChart = itemView.findViewById(R.id.piechart);
+            LocNameView = itemView.findViewById(R.id.LocationName);
+            ActiveCasesView = itemView.findViewById(R.id.ActiveCasesFrag);
             TotalCasesView = itemView.findViewById(R.id.TotalCasesFrag);
-            RecoveredCasesView=itemView.findViewById(R.id.RecoveredFrag);;
-            DeathCasesView=itemView.findViewById(R.id.DeathsFrag);;
+            RecoveredCasesView = itemView.findViewById(R.id.RecoveredFrag);
+            DeathCasesView = itemView.findViewById(R.id.DeathsFrag);
         }
 
     }

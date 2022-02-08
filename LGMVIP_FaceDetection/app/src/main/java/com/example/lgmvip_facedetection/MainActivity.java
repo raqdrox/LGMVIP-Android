@@ -36,38 +36,29 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        // initializing our firebase in main activity
         FirebaseApp.initializeApp(MainActivity.this);
-
-        // finding the elements by their id's allotted.
         cameraButton = findViewById(R.id.camera_button);
 
-        // setting an onclick listener to the button so as
-        // to request image capture using camera
+
         cameraButton.setOnClickListener(
-                new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v)
-                    {
-                        // making a new intent for opening camera
-                        Intent intent = new Intent(
-                                MediaStore.ACTION_IMAGE_CAPTURE);
-                        if (intent.resolveActivity(
-                                getPackageManager())
-                                != null) {
-                            startActivityForResult(
-                                    intent, REQUEST_IMAGE_CAPTURE);
-                        }
-                        else {
-                            // if the image is not captured, set
-                            // a toast to display an error image.
-                            Toast
-                                    .makeText(
-                                            MainActivity.this,
-                                            "Something went wrong",
-                                            Toast.LENGTH_SHORT)
-                                    .show();
-                        }
+                v -> {
+                    // making a new intent for opening camera
+                    Intent intent = new Intent(
+                            MediaStore.ACTION_IMAGE_CAPTURE);
+                    if (intent.resolveActivity(
+                            getPackageManager())
+                            != null) {
+                        startActivityForResult(
+                                intent, REQUEST_IMAGE_CAPTURE);
+                    }
+                    else {
+
+                        Toast
+                                .makeText(
+                                        MainActivity.this,
+                                        "Something went wrong",
+                                        Toast.LENGTH_SHORT)
+                                .show();
                     }
                 });
     }
@@ -76,22 +67,18 @@ public class MainActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode,
                                     int resultCode,
                                     @Nullable Intent data) {
-        // after the image is captured, ML Kit provides an
-        // easy way to detect faces from variety of image
-        // types like Bitmap
 
         super.onActivityResult(requestCode, resultCode,
                 data);
         if (requestCode == REQUEST_IMAGE_CAPTURE
                 && resultCode == RESULT_OK) {
+            assert data != null;
             Bundle extra = data.getExtras();
             Bitmap bitmap = (Bitmap) extra.get("data");
             AnalyzeFaces(bitmap);
         }
     }
-    // If you want to configure your face detection model
-    // according to your needs, you can do that with a
-    // FirebaseVisionFaceDetectorOptions object.
+
     private void AnalyzeFaces(Bitmap bitmap)
     {
         FaceDetectorOptions options

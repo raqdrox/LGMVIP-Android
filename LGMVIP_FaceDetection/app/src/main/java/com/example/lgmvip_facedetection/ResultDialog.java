@@ -36,7 +36,6 @@ public class ResultDialog extends DialogFragment {
     {
 
         View view = inflater.inflate(R.layout.fragment_resultdialog, container,false);
-        String resultText = "";
         okBtn = view.findViewById(R.id.result_ok_button);
         recyclerView = view.findViewById(R.id.faces_rv);
 
